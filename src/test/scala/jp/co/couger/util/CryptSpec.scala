@@ -1,8 +1,6 @@
-package jp.co.couger.crypt
+package jp.co.couger.util
 
 import org.specs2.mutable.Specification
-
-import java.lang.Class._
 
 /**
  * Created by tomoya@couger.co.jp on 3/18/15.

@@ -1,10 +1,11 @@
-package jp.co.couger.gzip
+package jp.co.couger.util
 
 import java.io.{BufferedReader, ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
 import java.nio.charset.Charset
 import java.util.zip._
 
 import scala.util.control.Exception._
+
 import scalaz.Scalaz._
 
 /**

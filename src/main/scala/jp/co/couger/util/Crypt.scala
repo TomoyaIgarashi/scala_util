@@ -1,17 +1,14 @@
-package jp.co.couger.crypt
+package jp.co.couger.util
 
-import javax.crypto.Cipher
-import javax.crypto.Mac
+import javax.crypto.{Cipher, Mac}
 import javax.crypto.spec.{IvParameterSpec, SecretKeySpec}
 
-import jp.co.couger.gzip.GZIP._
+import org.apache.commons.codec.binary.Base64
 
 import scala.util.Random
 import scala.util.control.Exception._
 
 import scalaz.Scalaz._
-
-import org.apache.commons.codec.binary.Base64
 
 /**
  * Created by tomoya@couger.co.jp on 3/18/15.
@@ -59,7 +56,7 @@ object Crypt {
     }
 
     for {
-      r1 <- compress(source, charsetName)
+      r1 <- GZIP.compress(source, charsetName)
       r2 <- cipher(Cipher.ENCRYPT_MODE, secretKey, algoCipher, paddingCipher, iv)
       r3 <- encrypt(r1, r2, base64Iv)
       r4 <- mac(r3, secretKey, algoMAC)
@@ -110,7 +107,7 @@ object Crypt {
       r1 <- split(digest)
       r2 <- cipher(Cipher.DECRYPT_MODE, secretKey, algoCipher, paddingCipher, r1(1))
       r3 <- decrypt(r1(0), r2)
-      r4 <- decompress(r3, charsetName)
+      r4 <- GZIP.decompress(r3, charsetName)
     } yield {
       r4
     }

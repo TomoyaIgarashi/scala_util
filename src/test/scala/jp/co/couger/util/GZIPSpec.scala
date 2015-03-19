@@ -1,4 +1,4 @@
-package jp.co.couger.gzip
+package jp.co.couger.util
 
 import org.specs2.mutable.Specification
 
