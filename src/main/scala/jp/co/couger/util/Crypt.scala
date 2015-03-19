@@ -27,13 +27,15 @@ object Crypt {
    */
   def encrypt(
     source: String,
-    secretKey: String = "",
+    secretKey: String,
     algoCipher: String = "AES",
     paddingCipher: String = "AES/CBC/PKCS5Padding",
     algoMAC: String = "HmacSHA1",
     charsetName: String = "UTF-8"): Either[Throwable, String] = {
 
-    require(Option(source).nonEmpty)
+    def requireSource(source: String): Either[Throwable, String] = {
+      Option(source).toRight(new NullPointerException)
+    }
 
     def randomByte(n: Int) = {
       val r = Random.shuffle((0 until 255).toList).headOption | 0
@@ -56,12 +58,13 @@ object Crypt {
     }
 
     for {
-      r1 <- GZIP.compress(source, charsetName)
-      r2 <- cipher(Cipher.ENCRYPT_MODE, secretKey, algoCipher, paddingCipher, iv)
-      r3 <- encrypt(r1, r2, base64Iv)
-      r4 <- mac(r3, secretKey, algoMAC)
+      r1 <- requireSource(source)
+      r2 <- GZIP.compress(r1, charsetName)
+      r3 <- cipher(Cipher.ENCRYPT_MODE, secretKey, algoCipher, paddingCipher, iv)
+      r4 <- encrypt(r2, r3, base64Iv)
+      r5 <- mac(r4, secretKey, algoMAC)
     } yield {
-      r3 + "--" + r4
+      r4 + "--" + r5
     }
   }
 
@@ -82,8 +85,6 @@ object Crypt {
     paddingCipher: String = "AES/CBC/PKCS5Padding",
     algoMAC: String = "HmacSHA1",
     charsetName: String = "UTF-8"): Either[Throwable, String] = {
-
-    require(Option(digest).nonEmpty)
 
     def split(digest: String): Either[Throwable, Seq[Array[Byte]]] = {
       allCatch either {
